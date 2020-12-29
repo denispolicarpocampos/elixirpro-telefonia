@@ -81,7 +81,7 @@ defmodule Assinante do
 
     case assinante.plano.__struct__ == assinante_antigo.plano.__struct__ do
       true ->
-        {nova_lista ++ [assinante]}
+        (nova_lista ++ [assinante])
         |> :erlang.term_to_binary()
         |> write(pega_plano(assinante))
 
