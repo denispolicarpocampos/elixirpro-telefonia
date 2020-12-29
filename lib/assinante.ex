@@ -54,20 +54,32 @@ defmodule Assinante do
 
   ## Exemplo
 
-      iex> Assinante.cadastrar("Marlon", "123123", "123123")
+      iex> Assinante.cadastrar("Marlon", "123123", "123123", :prepago)
       {:ok, "Assinante Marlon cadastrado com sucesso"}
   """
+  def cadastrar(nome, numero, cpf, :prepago), do: cadastrar(nome, numero, cpf, %Prepago{})
+  def cadastrar(nome, numero, cpf, :pospago), do: cadastrar(nome, numero, cpf, %Pospago{})
+
   def cadastrar(nome, numero, cpf, plano) do
     case buscar_assinante(numero) do
       nil ->
-        (read(plano) ++ [%__MODULE__{nome: nome, numero: numero, cpf: cpf, plano: plano}])
+        assinante = %__MODULE__{nome: nome, numero: numero, cpf: cpf, plano: plano}
+
+        (read(pega_plano(assinante)) ++ [assinante])
         |> :erlang.term_to_binary()
-        |> write(plano)
+        |> write(pega_plano(assinante))
 
         {:ok, "Assinante #{nome} cadastrado com sucesso"}
 
       _assinante ->
         {:error, "Assinante com este numero Cadastrado!"}
+    end
+  end
+
+  def pega_plano(assinante) do
+    case assinante.plano.__struct__ == Prepago do
+      true -> :prepago
+      false -> :pospago
     end
   end
 
@@ -78,7 +90,7 @@ defmodule Assinante do
       assinantes()
       |> List.delete(assinante)
       |> :erlang.term_to_binary()
-      |> write(assinante.plano)
+      |> write(pega_plano(assinante))
 
     {result_delete, "Assinante #{assinante.nome} deletado!"}
   end
