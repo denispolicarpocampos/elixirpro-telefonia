@@ -34,9 +34,9 @@ defmodule Assinante do
 
   defp filtro(lista, numero), do: Enum.find(lista, &(&1.numero === numero))
 
-  defp assinantes(), do: read(:prepago) ++ read(:pospago)
-  defp assinantes_pospago(), do: read(:pospago)
-  defp assinantes_prepago(), do: read(:prepago)
+  def assinantes(), do: read(:prepago) ++ read(:pospago)
+  def assinantes_pospago(), do: read(:pospago)
+  def assinantes_prepago(), do: read(:prepago)
 
   @doc """
   Funcao para cadastrar assinante seja ele `prepago` e `pospago`
